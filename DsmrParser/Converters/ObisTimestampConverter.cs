@@ -9,7 +9,7 @@ namespace DsmrParser.Converters
         //Timestamps in format: YYMMddHHmmss[W|S]
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
-            string stringValue = value as string;
+            var stringValue = value as string;
             if (!string.IsNullOrWhiteSpace(stringValue))
             {
                 stringValue = stringValue.Substring(0, stringValue.Length - 1); //remove 'W' or 'S'

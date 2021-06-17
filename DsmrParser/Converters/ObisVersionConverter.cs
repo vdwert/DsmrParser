@@ -9,7 +9,7 @@ namespace DsmrParser.Converters
     {
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
-            string stringValue = value as string;
+            var stringValue = value as string;
             if (!string.IsNullOrWhiteSpace(stringValue))
             {
                 switch (stringValue)

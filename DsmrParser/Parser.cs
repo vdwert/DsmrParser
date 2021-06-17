@@ -24,7 +24,7 @@ namespace DsmrParser.Dsmr
         public async Task<IList<Telegram>> Parse(string message)
         {
             IList<Telegram> telegrams = new List<Telegram>();
-            using (StringReader reader = new StringReader(message))
+            using (var reader = new StringReader(message))
             {
                 await ParseFromStringReader(reader, (object sender, Telegram telegram) => {
                     telegrams.Add(telegram);
@@ -35,14 +35,14 @@ namespace DsmrParser.Dsmr
         
         public async Task ParseFromStream(Stream stream, TelegramParsedEventHandler onParsedEvent)
         {
-            Byte[] buffer = new byte[8192];
+            var buffer = new byte[8192];
             int count;
 
             while ((count = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
             {
                 if (count != 0)
                 {
-                    using (StringReader reader = new StringReader(TelegramEncoding.GetString(buffer, 0, buffer.Length)))
+                    using (var reader = new StringReader(TelegramEncoding.GetString(buffer, 0, buffer.Length)))
                     {
                         await ParseFromStringReader(reader, onParsedEvent);
                     }
@@ -115,7 +115,7 @@ namespace DsmrParser.Dsmr
                 yield return null;
             }
 
-            foreach (PropertyInfo property in GetTelegramProperties())
+            foreach (var property in GetTelegramProperties())
             {
                 var attr = property.GetCustomAttributes(typeof(ObisAttribute), false).Cast<ObisAttribute>().FirstOrDefault();
                 if (attr != null && attr.ObisIdentifier == key)
@@ -151,8 +151,8 @@ namespace DsmrParser.Dsmr
 
         private static void SetTelegramProperties(ref Telegram telegram, IEnumerable<string> properties, IEnumerable<string> values)
         {
-            IEnumerable<PropertyInfo> telegramProperties = GetTelegramProperties().Where(p => properties.Contains(p.Name));
-            foreach (PropertyInfo propertyInfo in telegramProperties)
+            var telegramProperties = GetTelegramProperties().Where(p => properties.Contains(p.Name));
+            foreach (var propertyInfo in telegramProperties)
             {
                 var obisAttribute =
                     propertyInfo.GetCustomAttributes(typeof(ObisAttribute), false)
@@ -182,7 +182,7 @@ namespace DsmrParser.Dsmr
 
         private static object GetConvertedPropertyValue(PropertyInfo propertyInfo, string value, string obisValueUnit = null)
         {
-            TypeConverter converter = TypeDescriptor.GetConverter(propertyInfo.PropertyType);
+            var converter = TypeDescriptor.GetConverter(propertyInfo.PropertyType);
             var converterAttribute =
                 propertyInfo.GetCustomAttributes(typeof(TypeConverterAttribute), false)
                     .Cast<TypeConverterAttribute>()
